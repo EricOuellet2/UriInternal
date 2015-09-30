@@ -2,64 +2,12 @@
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Windows;
-using System.Windows.Media.Imaging;
-using System.Windows.Resources;
-using MoreLinq;
 
 namespace UriInternal
 {
-    public class ResourceHelper
+    public static class ResourceHelper
     {
-        // ******************************************************************
-        /// <summary>
-        /// Load a resource WPF-BitmapImage (png, bmp, ...) from embedded resource defined as 'Resource' not as 'Embedded resource'.
-        /// </summary>
-        /// <param name="pathInApplication">Path without starting slash</param>
-        /// <param name="assembly">Usually 'Assembly.GetExecutingAssembly()'. If not mentionned, I will use the calling assembly</param>
-        /// <returns></returns>
-        public static BitmapImage LoadBitmapFromResource(string pathInApplication, Assembly assembly = null)
-        {
-            if (assembly == null)
-            {
-                assembly = Assembly.GetCallingAssembly();
-            }
-
-            return new BitmapImage(GetLocationUri(pathInApplication, assembly));
-        }
-
-        // ******************************************************************
-        /// <summary>
-        /// The resource should be defined as 'Resource' not as 'Embedded resource'.
-        /// Example: 			
-        ///		StreamResourceInfo info = ResourceHelper.GetResourceStreamInfo(@"Resources/GraphicUserGuide.html");
-        ///		if (info != null)
-        ///		{
-        ///			WebBrowser.NavigateToStream(info.Stream);
-        ///		}
-        /// </summary>
-        /// <param name="path">The path start with folder name (if any) then '/', then ...</param>
-        /// <param name="assembly">If null, then use calling assembly to find the resource</param>
-        /// <returns></returns>
-        public static StreamResourceInfo GetResourceStreamInfo(string path, Assembly assembly = null)
-        {
-            if (assembly == null)
-            {
-                assembly = Assembly.GetCallingAssembly();
-            }
-
-            return Application.GetResourceStream(GetLocationUri(path, assembly));
-        }
-
-        // ******************************************************************
-        public static Stream GetResource(Uri uri)
-        {
-            return System.Windows.Application.GetResourceStream(uri).Stream;
-        }
-
         // ******************************************************************
         /// <summary>
         /// The resource should be defined as 'Resource' not as 'Embedded resource'.
@@ -163,7 +111,7 @@ namespace UriInternal
             {
                 path = path.Replace('\\', '/');
             }
-            
+
             Stream resStream = null;
 
             string resName = asm.GetName().Name + ".g.resources"; // Ref: Thomas Levesque Answer at:
@@ -171,24 +119,60 @@ namespace UriInternal
 
             using (var stream = asm.GetManifestResourceStream(resName))
             {
-                using (var reader = new System.Resources.ResourceReader(stream))
+                using (var resReader = new System.Resources.ResourceReader(stream))
                 {
-                    DebugPrintResources(reader);
-
-                    string resType;
-                    byte[] resData = null;
+                    string dataType = null;
+                    byte[] data = null;
                     try
                     {
-                        reader.GetResourceData(path.ToLower(), out resType, out resData);
+                        resReader.GetResourceData(path.ToLower(), out dataType, out data);
                     }
                     catch (Exception ex)
                     {
-                       
+                        DebugPrintResources(resReader);
                     }
 
-                    if (resData != null)
+                    if (data != null)
                     {
-                        resStream = new MemoryStream(resData);
+                        switch (dataType) // COde from 
+                        {
+                            // Handle internally serialized string data (ResourceTypeCode members).
+                            case "ResourceTypeCode.String":
+                                BinaryReader reader = new BinaryReader(new MemoryStream(data));
+                                string binData = reader.ReadString();
+                                Console.WriteLine("   Recreated Value: {0}", binData);
+                                break;
+                            case "ResourceTypeCode.Int32":
+                                Console.WriteLine("   Recreated Value: {0}", BitConverter.ToInt32(data, 0));
+                                break;
+                            case "ResourceTypeCode.Boolean":
+                                Console.WriteLine("   Recreated Value: {0}", BitConverter.ToBoolean(data, 0));
+                                break;
+                            // .jpeg image stored as a stream.
+                            case "ResourceTypeCode.Stream":
+                                ////const int OFFSET = 4;
+                                ////int size = BitConverter.ToInt32(data, 0);
+                                ////Bitmap value1 = new Bitmap(new MemoryStream(data, OFFSET, size));
+                                ////Console.WriteLine("   Recreated Value: {0}", value1);
+
+                                const int OFFSET = 4;
+                                resStream = new MemoryStream(data, OFFSET, data.Length - OFFSET);
+
+                                break;
+                            // Our only other type is DateTimeTZI.
+                            default:
+                                ////// No point in deserializing data if the type is unavailable.
+                                ////if (dataType.Contains("DateTimeTZI") && loaded)
+                                ////{
+                                ////    BinaryFormatter binFmt = new BinaryFormatter();
+                                ////    object value2 = binFmt.Deserialize(new MemoryStream(data));
+                                ////    Console.WriteLine("   Recreated Value: {0}", value2);
+                                ////}
+                                ////break;
+                                break;
+                        }
+
+                        // resStream = new MemoryStream(resData);
                     }
                 }
             }
@@ -202,12 +186,11 @@ namespace UriInternal
             Debug.Print("Begin dump resources: ---------------------");
             foreach (DictionaryEntry item in reader)
             {
-                Debug.Print(item.Key.ToString());        
+                Debug.Print(item.Key.ToString());
             }
             Debug.Print("End   dump resources: ---------------------");
         }
 
-        // ******************************************************************
-
+        // ******************************************************************        // ******************************************************************
     }
 }
