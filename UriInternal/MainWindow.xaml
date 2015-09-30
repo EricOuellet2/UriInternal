@@ -1,0 +1,98 @@
+﻿<Window x:Class="UriInternal.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UriInternal"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <Window.DataContext>
+        <local:MainWindowModel></local:MainWindowModel>
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="9"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0">Input Uri String</TextBlock>
+            <TextBox Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch" Background="Bisque" Text="{Binding Input}"></TextBox>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="AbsoluteUri"></TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding AbsoluteUri}"></TextBlock>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Authority"></TextBlock>
+            <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding Authority}"></TextBlock>
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Fragment"></TextBlock>
+            <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding Fragment}"></TextBlock>
+
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="Host"></TextBlock>
+            <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding Host}"></TextBlock>
+
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="HostAndPort"></TextBlock>
+            <TextBlock Grid.Row="5" Grid.Column="2" Text="{Binding HostAndPort}"></TextBlock>
+
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="HttpRequestUrl"></TextBlock>
+            <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding HttpRequestUrl}"></TextBlock>
+
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="KeepDelimiter"></TextBlock>
+            <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding KeepDelimiter}"></TextBlock>
+
+            <TextBlock Grid.Row="8" Grid.Column="0" Text="NormalizedHost"></TextBlock>
+            <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding NormalizedHost}"></TextBlock>
+
+            <TextBlock Grid.Row="9" Grid.Column="0" Text="Path"></TextBlock>
+            <TextBlock Grid.Row="9" Grid.Column="2" Text="{Binding Path}"></TextBlock>
+
+            <TextBlock Grid.Row="10" Grid.Column="0" Text="Scheme"></TextBlock>
+            <TextBlock Grid.Row="10" Grid.Column="2" Text="{Binding Scheme}"></TextBlock>
+
+            <TextBlock Grid.Row="11" Grid.Column="0" Text="Uri"></TextBlock>
+            <TextBlock Grid.Row="11" Grid.Column="2" Text="{Binding Uri}"></TextBlock>
+
+            <TextBlock Grid.Row="12" Grid.Column="0" Text="UserInfo"></TextBlock>
+            <TextBlock Grid.Row="12" Grid.Column="2" Text="{Binding UserInfo}"></TextBlock>
+
+            <TextBlock Grid.Row="13" Grid.Column="0" Text="Segments"></TextBlock>
+            <TextBlock Grid.Row="13" Grid.Column="2" Text="{Binding Segments}"></TextBlock>
+
+            <TextBlock Grid.Row="14" Grid.Column="0" Text="Load result"></TextBlock>
+            <TextBlock Grid.Row="14" Grid.Column="2" Text="{Binding LoadResult}"></TextBlock>
+
+        </Grid>
+
+        <StackPanel Grid.Row="1">
+            <Button Name="ButtonUpdate" Click="ButtonUpdateOnClick">Update Uri info base on "Input Uri String"</Button>
+            <Button Name="LoadDllAndShowResources" Click="LoadDllAndShowResourcesOnClick">Load module and show resources</Button>
+            <Button Name="TestResourceHelperLoadRes" Click="TestResourceHelperLoadRes_OnClick">Test ResourceHelper LoadRes</Button>
+        </StackPanel>
+    </Grid>
+
+</Window>
